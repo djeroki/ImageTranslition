@@ -28,6 +28,17 @@ namespace ImageTranslition
         {
             return (x > y ? x : y);
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Zoom(pictureBox1, 0.5);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Zoom(pictureBox1, 1);
+        }
+
         int min(int x, int y)
         {
             return (x < y ? x : y);
@@ -64,13 +75,29 @@ namespace ImageTranslition
             //grp.FillRectangle(brush, new Rectangle(0, 0, 200, 200));
         }
 
+        public void Zoom(PictureBox pb1, double x)
+        {
+            Graphics grp = Graphics.FromHwnd(pb1.Handle);
+            Bitmap bmp = new Bitmap(pb1.Image);
+            int newW = (int)(bmp.Width * x);
+            int newH = (int)(bmp.Height * x);
+            Rectangle srcRect = new Rectangle(0, 0, newW, newH);
+            Rectangle dstRect = new Rectangle(0, 0, pb1.Width, pb1.Height);
+            grp.DrawImage(bmp, dstRect, srcRect, GraphicsUnit.Pixel);
+            return;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             //MessageBox.Show(textBox1.Text + " " + textBox2.Text);
             //MessageBox.Show(Convert.ToString(int.Parse(textBox2.Text)));
             double h = double.Parse(textBox1.Text);
             double w = double.Parse(textBox2.Text);
-            scale = 10;
+            scale = 1;
+            if (h < 1 || w < 1)
+                scale = 10;
+            if (h < 0.1 || w < 0.1)
+                scale = 100;
             scaledh = (int)(h * scale);
             scaledw = (int)(w * scale);
             pattern = new Bitmap(pictureBox1.Height, pictureBox1.Width);
@@ -84,6 +111,7 @@ namespace ImageTranslition
 
             bmp = new Bitmap(pictureBox1.Height, pictureBox1.Width);
             bmp = (Bitmap)pictureBox1.Image;
+
             bmp.SetResolution(pictureBox1.Image.VerticalResolution, pictureBox1.Image.HorizontalResolution);
             grp = Graphics.FromImage(bmp);
 
@@ -102,7 +130,6 @@ namespace ImageTranslition
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-
         }
     }
 }
