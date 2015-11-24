@@ -27,11 +27,14 @@ namespace ImageTranslition
         {
             return (x > y ? x : y);
         }
+        int min(int x, int y)
+        {
+            return (x < y ? x : y);
+        }
 
         public Color GetAverageColor(Bitmap bmp, int j, int i, int j1, int i1)
         {
             Color c1, c2, c3, c4;
-
             c1 = bmp.GetPixel(j, i);
             c2 = bmp.GetPixel(j, i1);
             c3 = bmp.GetPixel(j1, i);
@@ -49,9 +52,9 @@ namespace ImageTranslition
 
             lock(grp)
             {
-                for (int j = 0; j < GlobW / scaledw * scale; j += scaledw)
+                for (int j = 0; j < GlobW; j += scaledw)
                 {
-                    var brush = new HatchBrush(HatchStyle.Vertical, Color.Black, GetAverageColor(bmp, j, i, j + scaledw, i + scaledh));
+                    var brush = new HatchBrush(HatchStyle.Vertical, Color.Transparent, GetAverageColor(bmp, min(j, GlobW - 1), min(i, GlobH - 1), min(j + scaledw, GlobW - 1), min(i + scaledh, GlobH - 1)));
                     //grp.DrawRectangle(pen, new Rectangle(j, i, j + scaledw, i + scaledh));
                     grp.FillRectangle(brush, new Rectangle(j, i, j + scaledw, i + scaledh));
                 }
@@ -84,9 +87,10 @@ namespace ImageTranslition
 
             DrawFunc func = new DrawFunc(DrawCells);
 
-            for (int i = 0; i < GlobH / scaledh * scale; i += scaledh)
+            for (int i = 0; i < GlobH; i += scaledh)
             {
-                new Thread(() => DrawCells(bmp, i)).Start();
+                //new Thread(() => DrawCells(bmp, i)).Start();
+                DrawCells(bmp, i);
                 //func.BeginInvoke(i, null, null);
                 pictureBox1.Image = bmp;
                 pictureBox1.Refresh();
