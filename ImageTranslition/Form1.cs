@@ -46,7 +46,7 @@ namespace ImageTranslition
             return Color.FromArgb(AverageRed, AverageGreen, AverageBlue);
         }
 
-        public void DrawCells(Bitmap bmp, int i)
+        public void DrawCells(Bitmap pattern, Bitmap bmp, int i)
         {
             //var pen = new Pen(Color.Black, 0.00001f);
 
@@ -54,15 +54,13 @@ namespace ImageTranslition
             {
                 for (int j = 0; j < GlobW; j += scaledw)
                 {
-                    var brush = new HatchBrush(HatchStyle.Vertical, Color.Transparent, GetAverageColor(bmp, min(j, GlobW - 1), min(i, GlobH - 1), min(j + scaledw, GlobW - 1), min(i + scaledh, GlobH - 1)));
+                    var brush = new HatchBrush(HatchStyle.Vertical, Color.Transparent, GetAverageColor(pattern, min(j, GlobW - 1), min(i, GlobH - 1), min(j + scaledw, GlobW - 1), min(i + scaledh, GlobH - 1)));
                     //grp.DrawRectangle(pen, new Rectangle(j, i, j + scaledw, i + scaledh));
                     grp.FillRectangle(brush, new Rectangle(j, i, j + scaledw, i + scaledh));
                 }
                 return;
             }
         }
-
-        delegate void DrawFunc(Bitmap bmp, int i);
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -85,12 +83,10 @@ namespace ImageTranslition
             GlobH = bmp.Height;
             GlobW = bmp.Width;
 
-            DrawFunc func = new DrawFunc(DrawCells);
-
             for (int i = 0; i < GlobH; i += scaledh)
             {
                 //new Thread(() => DrawCells(bmp, i)).Start();
-                DrawCells(bmp, i);
+                DrawCells(pattern, bmp, i);
                 //func.BeginInvoke(i, null, null);
                 pictureBox1.Image = bmp;
                 pictureBox1.Refresh();
